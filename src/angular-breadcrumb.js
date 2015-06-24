@@ -9,17 +9,17 @@ function isAOlderThanB(scopeA, scopeB) {
 }
 
 function getScopesFromState($state) {
-    var scopes = [];
+    var viewsScopes = [];
     var result = {};
 
     for (var name in $state.$current.views) {
         if ($state.$current.views.hasOwnProperty(name)) {
-            scopes.push(name);
+            viewsScopes.push(name);
         }
     }
 
-    scopes.forEach(function (name) {
-        result[name] = $state.$current.locals[name];
+    viewsScopes.forEach(function (name) {
+        result[name] = $state.$current.locals[name].$scope;
     });
 
     return result;

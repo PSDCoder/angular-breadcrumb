@@ -1,4 +1,4 @@
-/*! angular-breadcrumb - v0.4.3
+/*! angular-breadcrumb - v0.4.4
 * http://ncuillery.github.io/angular-breadcrumb
 * Copyright (c) 2015 Nicolas Cuillery; Licensed MIT */
 
@@ -15,6 +15,7 @@ function isAOlderThanB(scopeA, scopeB) {
 
 function getScopesFromState($state) {
     var scopes = [];
+    var result = {};
 
     for (var name in $state.$current.views) {
         if ($state.$current.views.hasOwnProperty(name)) {
@@ -22,9 +23,11 @@ function getScopesFromState($state) {
         }
     }
 
-    return scopes.map(function (name) {
-        return $state.$current.locals[name];
+    scopes.forEach(function (name) {
+        result[name] = $state.$current.locals[name];
     });
+
+    return result;
 }
 
 function parseStateRef(ref) {

@@ -1,4 +1,4 @@
-/*! angular-breadcrumb - v0.4.1
+/*! angular-breadcrumb - v0.4.2
 * http://ncuillery.github.io/angular-breadcrumb
 * Copyright (c) 2015 Nicolas Cuillery; Licensed MIT */
 
@@ -219,7 +219,8 @@ function BreadcrumbDirective($interpolate, $breadcrumb, $rootScope, $injector) {
                                     step.ncyBreadcrumb.label,
                                     null,
                                     {
-                                        $scope: scope
+                                        $scope: scope,
+                                        $controllerScope: viewScope
                                     }
                                 );
                             } else {
@@ -278,7 +279,8 @@ function BreadcrumbLastDirective($interpolate, $breadcrumb, $rootScope, $injecto
                                         lastStep.ncyBreadcrumb.label,
                                         null,
                                         {
-                                            $scope: scope
+                                            $scope: scope,
+                                            $controllerScope: viewScope
                                         }
                                     );
                                 } else {
@@ -350,7 +352,10 @@ function BreadcrumbTextDirective($interpolate, $breadcrumb, $rootScope, $injecto
                             if (step.ncyBreadcrumb && step.ncyBreadcrumb.label) {
                                 if (angular.isFunction(step.ncyBreadcrumb.label)) {
                                     combinedLabels.push(
-                                        $injector.invoke(step.ncyBreadcrumb.label, null, { $scope: scope})
+                                        $injector.invoke(step.ncyBreadcrumb.label, null, {
+                                            $scope: scope,
+                                            $controllerScope: viewScope
+                                        })
                                     );
                                 } else {
                                     var parseLabel = $interpolate(step.ncyBreadcrumb.label);

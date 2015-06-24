@@ -28,7 +28,7 @@ describe('Text directive with sample conf', function() {
 
         console.info('Directive content : ' + element.text());
 
-        expect(element.text()).toBe('MyApp: Home / Sample / Rooms / Room 103');
+        expect(element.text()).toBe('MyApp: Home / From $testService value: Sample / Rooms / Room 103');
     }));
 
 });

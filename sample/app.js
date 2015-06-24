@@ -20,7 +20,9 @@ angular.module('ncy-sample', ['ui.router.state', 'ui.bootstrap', 'ncy-angular-br
         url: '/sample',
         templateUrl: 'views/sample.html',
         ncyBreadcrumb: {
-          label: 'Sample'
+          label: function ($testService, $scope) {
+            return $testService('Sample');
+          }
         }
       })
       .state('booking', {
@@ -110,6 +112,11 @@ angular.module('ncy-sample', ['ui.router.state', 'ui.bootstrap', 'ncy-angular-br
 
     $urlRouterProvider.otherwise('/home');
 
+  })
+  .factory('$testService', function () {
+    return function (value) {
+      return 'From $testService value: ' + value;
+    }
   })
   .value('rooms', [
     {roomId: 1, roomNumber: 101, type: 'Double'},

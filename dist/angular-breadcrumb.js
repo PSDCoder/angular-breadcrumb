@@ -13,6 +13,20 @@ function isAOlderThanB(scopeA, scopeB) {
     }
 }
 
+function getScopesFromState($state) {
+    var scopes = [];
+    
+    for (var name in $state.$current.views) {
+        if ($state.$current.views.hasOwnProperty(name)) {
+            scopes.push(name);
+        }
+    }
+
+    return scopes.map(function (name) {
+        return $state.$current.locals[name];
+    });
+}
+
 function parseStateRef(ref) {
     var parsed = ref.replace(/\n/g, " ").match(/^([^(]+?)\s*(\((.*)\))?$/);
     if (!parsed || parsed.length !== 4) { throw new Error("Invalid state ref '" + ref + "'"); }
@@ -179,7 +193,7 @@ var deregisterWatchers = function(labelWatcherArray) {
     });
 };
 
-function BreadcrumbDirective($interpolate, $breadcrumb, $rootScope, $injector) {
+function BreadcrumbDirective($interpolate, $breadcrumb, $rootScope, $injector, $state) {
     var $$templates = {
         bootstrap2: '<ul class="breadcrumb">' +
             '<li ng-repeat="step in steps" ng-switch="$last || !!step.abstract" ng-class="{active: $last}">' +
@@ -219,7 +233,8 @@ function BreadcrumbDirective($interpolate, $breadcrumb, $rootScope, $injector) {
                                     step.ncyBreadcrumb.label,
                                     null,
                                     {
-                                        $scope: scope
+                                        $scope: scope,
+                                        $viewScopes: getScopesFromState($state)
                                     }
                                 );
                             } else {
@@ -244,9 +259,9 @@ function BreadcrumbDirective($interpolate, $breadcrumb, $rootScope, $injector) {
         }
     };
 }
-BreadcrumbDirective.$inject = ['$interpolate', '$breadcrumb', '$rootScope', '$injector'];
+BreadcrumbDirective.$inject = ['$interpolate', '$breadcrumb', '$rootScope', '$injector', '$state'];
 
-function BreadcrumbLastDirective($interpolate, $breadcrumb, $rootScope, $injector) {
+function BreadcrumbLastDirective($interpolate, $breadcrumb, $rootScope, $injector, $state) {
 
     return {
         restrict: 'A',
@@ -278,7 +293,8 @@ function BreadcrumbLastDirective($interpolate, $breadcrumb, $rootScope, $injecto
                                         lastStep.ncyBreadcrumb.label,
                                         null,
                                         {
-                                            $scope: scope
+                                            $scope: scope,
+                                            $viewScopes: getScopesFromState($state)
                                         }
                                     );
                                 } else {
@@ -306,9 +322,9 @@ function BreadcrumbLastDirective($interpolate, $breadcrumb, $rootScope, $injecto
         }
     };
 }
-BreadcrumbLastDirective.$inject = ['$interpolate', '$breadcrumb', '$rootScope', '$injector'];
+BreadcrumbLastDirective.$inject = ['$interpolate', '$breadcrumb', '$rootScope', '$injector', '$state'];
 
-function BreadcrumbTextDirective($interpolate, $breadcrumb, $rootScope, $injector) {
+function BreadcrumbTextDirective($interpolate, $breadcrumb, $rootScope, $injector, $state) {
 
     return {
         restrict: 'A',
@@ -350,7 +366,10 @@ function BreadcrumbTextDirective($interpolate, $breadcrumb, $rootScope, $injecto
                             if (step.ncyBreadcrumb && step.ncyBreadcrumb.label) {
                                 if (angular.isFunction(step.ncyBreadcrumb.label)) {
                                     combinedLabels.push(
-                                        $injector.invoke(step.ncyBreadcrumb.label, null, { $scope: scope})
+                                        $injector.invoke(step.ncyBreadcrumb.label, null, {
+                                            $scope: scope,
+                                            $viewScopes: getScopesFromState($state)
+                                        })
                                     );
                                 } else {
                                     var parseLabel = $interpolate(step.ncyBreadcrumb.label);
@@ -378,7 +397,7 @@ function BreadcrumbTextDirective($interpolate, $breadcrumb, $rootScope, $injecto
         }
     };
 }
-BreadcrumbTextDirective.$inject = ['$interpolate', '$breadcrumb', '$rootScope', '$injector'];
+BreadcrumbTextDirective.$inject = ['$interpolate', '$breadcrumb', '$rootScope', '$injector', '$state'];
 
 angular.module('ncy-angular-breadcrumb', ['ui.router.state'])
     .provider('$breadcrumb', $Breadcrumb)

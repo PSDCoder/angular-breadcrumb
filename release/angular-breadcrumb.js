@@ -1,4 +1,4 @@
-/*! angular-breadcrumb - v0.4.9
+/*! angular-breadcrumb - v0.4.10
 * http://ncuillery.github.io/angular-breadcrumb
 * Copyright (c) 2015 Nicolas Cuillery; Licensed MIT */
 
@@ -15,6 +15,12 @@ function isAOlderThanB(scopeA, scopeB) {
 
 function handleResolve(stateConfig) {
     var result = {};
+
+    for (var resolve in stateConfig.resolve) {
+        if (stateConfig.resolve.hasOwnProperty(resolve)) {
+            result[resolve] = stateConfig.locals.globals[resolve];
+        }
+    }
 
     for (var viewName in stateConfig.views) {
         if (stateConfig.views.hasOwnProperty(viewName)) {

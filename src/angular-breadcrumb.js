@@ -11,6 +11,12 @@ function isAOlderThanB(scopeA, scopeB) {
 function handleResolve(stateConfig) {
     var result = {};
 
+    for (var resolve in stateConfig.resolve) {
+        if (stateConfig.resolve.hasOwnProperty(resolve)) {
+            result[resolve] = stateConfig.locals.globals[resolve];
+        }
+    }
+
     for (var viewName in stateConfig.views) {
         if (stateConfig.views.hasOwnProperty(viewName)) {
             var viewResolves = stateConfig.views[viewName].resolve;

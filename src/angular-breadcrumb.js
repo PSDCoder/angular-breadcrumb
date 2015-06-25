@@ -17,15 +17,7 @@ function handleResolve(stateConfig) {
 
             for (var resolveName in viewResolves) {
                 if (viewResolves.hasOwnProperty(resolveName) && resolveName !== '$template') {
-                    var fullViewName = viewName.charAt(viewName.length - 1) === '@' ?
-                        (viewName + stateConfig.self.name) :
-                        viewName;
-
-                    if (!result[fullViewName]) {
-                        result[fullViewName] = {};
-                    }
-
-                    result[fullViewName][resolveName] = stateConfig.locals[viewName][resolveName];
+                    result[resolveName] = stateConfig.locals[viewName][resolveName];
                 }
             }
         }
@@ -37,23 +29,17 @@ function handleResolve(stateConfig) {
 function getResolves($state) {
     var result = {};
     var current = $state.$current;
-
+    var reorderedStates = [];
+    
     while (current) {
-        var resolves = handleResolve(current);
-
-        for (var viewName in resolves) {
-            if (resolves.hasOwnProperty(viewName)) {
-                if (viewName in result) {
-                    angular.extend(result[viewName], resolves[viewName]);
-                } else {
-                    result[viewName] = resolves[viewName];
-                }
-            }
-        }
-
+        reorderedStates.unshift(current);
         current = current.parent;
     }
 
+    for (var i = 0, ii = reorderedStates.length; i < ii; i++) {
+        angular.extend(result, handleResolve(reorderedStates[i]));
+    }
+    
     return result;
 }
 

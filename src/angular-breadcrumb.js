@@ -264,7 +264,7 @@ function BreadcrumbDirective($interpolate, $breadcrumb, $rootScope, $injector, $
                             if (angular.isFunction(step.ncyBreadcrumb.label)) {
                                 step.ncyBreadcrumbLabel = $injector.invoke(
                                     step.ncyBreadcrumb.label,
-                                    null,
+                                    step,
                                     {
                                         $scope: scope,
                                         $viewScopes: getScopesFromState($state),
@@ -325,7 +325,7 @@ function BreadcrumbLastDirective($interpolate, $breadcrumb, $rootScope, $injecto
                                 if (angular.isFunction(lastStep.ncyBreadcrumb.label)) {
                                     scope.ncyBreadcrumbLabel = $injector.invoke(
                                         lastStep.ncyBreadcrumb.label,
-                                        null,
+                                        lastStep,
                                         {
                                             $scope: scope,
                                             $viewScopes: getScopesFromState($state),
@@ -401,7 +401,7 @@ function BreadcrumbTextDirective($interpolate, $breadcrumb, $rootScope, $injecto
                             if (step.ncyBreadcrumb && step.ncyBreadcrumb.label) {
                                 if (angular.isFunction(step.ncyBreadcrumb.label)) {
                                     combinedLabels.push(
-                                        $injector.invoke(step.ncyBreadcrumb.label, null, {
+                                        $injector.invoke(step.ncyBreadcrumb.label, step, {
                                             $scope: scope,
                                             $viewScopes: getScopesFromState($state),
                                             $resolves: getResolves($state)

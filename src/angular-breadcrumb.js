@@ -8,6 +8,26 @@ function isAOlderThanB(scopeA, scopeB) {
     }
 }
 
+function getResolves($state) {
+    var result = {};
+
+    for (var viewName in $state.$current.views) {
+        if ($state.$current.views.hasOwnProperty(viewName)) {
+            var viewResolves = $state.$current.views[viewName].resolve;
+
+            result[viewName] = {};
+
+            for (var resolveName in viewResolves) {
+                if (viewResolves.hasOwnProperty(resolveName) && resolveName !== '$template') {
+                    result[viewName][resolveName] = $state.$current.locals[viewName][resolveName];
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
 function getScopesFromState($state) {
     var viewsScopes = [];
     var result = {};
@@ -232,7 +252,8 @@ function BreadcrumbDirective($interpolate, $breadcrumb, $rootScope, $injector, $
                                     null,
                                     {
                                         $scope: scope,
-                                        $viewScopes: getScopesFromState($state)
+                                        $viewScopes: getScopesFromState($state),
+                                        $resolves: getResolves($state)
                                     }
                                 );
                             } else {
@@ -292,7 +313,8 @@ function BreadcrumbLastDirective($interpolate, $breadcrumb, $rootScope, $injecto
                                         null,
                                         {
                                             $scope: scope,
-                                            $viewScopes: getScopesFromState($state)
+                                            $viewScopes: getScopesFromState($state),
+                                            $resolves: getResolves($state)
                                         }
                                     );
                                 } else {
@@ -366,7 +388,8 @@ function BreadcrumbTextDirective($interpolate, $breadcrumb, $rootScope, $injecto
                                     combinedLabels.push(
                                         $injector.invoke(step.ncyBreadcrumb.label, null, {
                                             $scope: scope,
-                                            $viewScopes: getScopesFromState($state)
+                                            $viewScopes: getScopesFromState($state),
+                                            $resolves: getResolves($state)
                                         })
                                     );
                                 } else {

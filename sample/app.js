@@ -20,7 +20,7 @@ angular.module('ncy-sample', ['ui.router.state', 'ui.bootstrap', 'ncy-angular-br
         url: '/sample',
         templateUrl: 'views/sample.html',
         ncyBreadcrumb: {
-          label: function ($testService, $scope) {
+          label: function ($testService, $resolves) {
             return $testService('Sample');
           }
         }

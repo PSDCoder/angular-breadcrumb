@@ -1,4 +1,4 @@
-/*! angular-breadcrumb - v0.4.2-dev-2015-06-24
+/*! angular-breadcrumb - v0.4.5-dev-2015-06-25
 * http://ncuillery.github.io/angular-breadcrumb
 * Copyright (c) 2015 Nicolas Cuillery; Licensed MIT */
 
@@ -13,18 +13,25 @@ function isAOlderThanB(scopeA, scopeB) {
     }
 }
 
+function getResolves($state) {
+    console.log($state);
+}
+
 function getScopesFromState($state) {
-    var scopes = [];
-    
+    var viewsScopes = [];
+    var result = {};
+
     for (var name in $state.$current.views) {
         if ($state.$current.views.hasOwnProperty(name)) {
-            scopes.push(name);
+            viewsScopes.push(name);
         }
     }
 
-    return scopes.map(function (name) {
-        return $state.$current.locals[name];
+    viewsScopes.forEach(function (name) {
+        result[name] = $state.$current.locals[name].$scope;
     });
+
+    return result;
 }
 
 function parseStateRef(ref) {

@@ -8,21 +8,50 @@ function isAOlderThanB(scopeA, scopeB) {
     }
 }
 
-function getResolves($state) {
+function handleResolve(stateConfig) {
     var result = {};
 
-    for (var viewName in $state.$current.views) {
-        if ($state.$current.views.hasOwnProperty(viewName)) {
-            var viewResolves = $state.$current.views[viewName].resolve;
-
-            result[viewName] = {};
+    for (var viewName in stateConfig.views) {
+        if (stateConfig.views.hasOwnProperty(viewName)) {
+            var viewResolves = stateConfig.views[viewName].resolve;
 
             for (var resolveName in viewResolves) {
                 if (viewResolves.hasOwnProperty(resolveName) && resolveName !== '$template') {
-                    result[viewName][resolveName] = $state.$current.locals[viewName][resolveName];
+                    var fullViewName = viewName.charAt(viewName.length - 1) === '@' ?
+                        (viewName + stateConfig.self.name) :
+                        viewName;
+
+                    if (!result[fullViewName]) {
+                        result[fullViewName] = {};
+                    }
+
+                    result[fullViewName][resolveName] = stateConfig.locals[viewName][resolveName];
                 }
             }
         }
+    }
+
+    return result;
+}
+
+function getResolves($state) {
+    var result = {};
+    var current = $state.$current;
+
+    while (current) {
+        var resolves = handleResolve(current);
+
+        for (var viewName in resolves) {
+            if (resolves.hasOwnProperty(viewName)) {
+                if (viewName in result) {
+                    angular.extend(result[viewName], resolves[viewName]);
+                } else {
+                    result[viewName] = resolves[viewName];
+                }
+            }
+        }
+
+        current = current.parent;
     }
 
     return result;

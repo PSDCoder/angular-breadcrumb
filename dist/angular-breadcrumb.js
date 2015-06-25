@@ -1,4 +1,4 @@
-/*! angular-breadcrumb - v0.4.5-dev-2015-06-25
+/*! angular-breadcrumb - v0.4.7-dev-2015-06-25
 * http://ncuillery.github.io/angular-breadcrumb
 * Copyright (c) 2015 Nicolas Cuillery; Licensed MIT */
 
@@ -13,8 +13,53 @@ function isAOlderThanB(scopeA, scopeB) {
     }
 }
 
+function handleResolve(stateConfig) {
+    var result = {};
+
+    for (var viewName in stateConfig.views) {
+        if (stateConfig.views.hasOwnProperty(viewName)) {
+            var viewResolves = stateConfig.views[viewName].resolve;
+
+            for (var resolveName in viewResolves) {
+                if (viewResolves.hasOwnProperty(resolveName) && resolveName !== '$template') {
+                    var fullViewName = viewName.charAt(viewName.length - 1) === '@' ?
+                        (viewName + stateConfig.self.name) :
+                        viewName;
+
+                    if (!result[fullViewName]) {
+                        result[fullViewName] = {};
+                    }
+
+                    result[fullViewName][resolveName] = stateConfig.locals[viewName][resolveName];
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
 function getResolves($state) {
-    console.log($state);
+    var result = {};
+    var current = $state.$current;
+
+    while (current) {
+        var resolves = handleResolve(current);
+
+        for (var viewName in resolves) {
+            if (resolves.hasOwnProperty(viewName)) {
+                if (viewName in result) {
+                    angular.extend(result[viewName], resolves[viewName]);
+                } else {
+                    result[viewName] = resolves[viewName];
+                }
+            }
+        }
+
+        current = current.parent;
+    }
+
+    return result;
 }
 
 function getScopesFromState($state) {
@@ -241,7 +286,8 @@ function BreadcrumbDirective($interpolate, $breadcrumb, $rootScope, $injector, $
                                     null,
                                     {
                                         $scope: scope,
-                                        $viewScopes: getScopesFromState($state)
+                                        $viewScopes: getScopesFromState($state),
+                                        $resolves: getResolves($state)
                                     }
                                 );
                             } else {
@@ -301,7 +347,8 @@ function BreadcrumbLastDirective($interpolate, $breadcrumb, $rootScope, $injecto
                                         null,
                                         {
                                             $scope: scope,
-                                            $viewScopes: getScopesFromState($state)
+                                            $viewScopes: getScopesFromState($state),
+                                            $resolves: getResolves($state)
                                         }
                                     );
                                 } else {
@@ -375,7 +422,8 @@ function BreadcrumbTextDirective($interpolate, $breadcrumb, $rootScope, $injecto
                                     combinedLabels.push(
                                         $injector.invoke(step.ncyBreadcrumb.label, null, {
                                             $scope: scope,
-                                            $viewScopes: getScopesFromState($state)
+                                            $viewScopes: getScopesFromState($state),
+                                            $resolves: getResolves($state)
                                         })
                                     );
                                 } else {

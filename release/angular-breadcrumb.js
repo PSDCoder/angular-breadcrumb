@@ -1,4 +1,4 @@
-/*! angular-breadcrumb - v0.4.10
+/*! angular-breadcrumb - v0.4.11
 * http://ncuillery.github.io/angular-breadcrumb
 * Copyright (c) 2015 Nicolas Cuillery; Licensed MIT */
 
@@ -283,6 +283,7 @@ function BreadcrumbDirective($interpolate, $breadcrumb, $rootScope, $injector, $
                                     }
                                 );
                             } else {
+                                console.log(step.ncyBreadcrumb);
                                 var parseLabel = $interpolate(step.ncyBreadcrumb.label);
                                 step.ncyBreadcrumbLabel = parseLabel(viewScope);
                                 // Watcher for further viewScope updates
@@ -344,6 +345,7 @@ function BreadcrumbLastDirective($interpolate, $breadcrumb, $rootScope, $injecto
                                         }
                                     );
                                 } else {
+                                    console.log(lastStep.ncyBreadcrumb);
                                     var parseLabel = $interpolate(lastStep.ncyBreadcrumb.label);
                                     scope.ncyBreadcrumbLabel = parseLabel(viewScope);
                                     // Watcher for further viewScope updates
@@ -419,6 +421,7 @@ function BreadcrumbTextDirective($interpolate, $breadcrumb, $rootScope, $injecto
                                         })
                                     );
                                 } else {
+                                    console.log(step.ncyBreadcrumb);
                                     var parseLabel = $interpolate(step.ncyBreadcrumb.label);
                                     combinedLabels.push(parseLabel(viewScope));
                                     // Watcher for further viewScope updates
